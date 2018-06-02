@@ -1,0 +1,15 @@
+{
+  "parser": "babel-eslint",
+  "extends": ["airbnb"],
+  "plugins": ["flowtype"],
+  "rules": {
+    "react/jsx-filename-extension": [0, {}],
+    "no-unused-vars": [0],
+    "no-bitwise": [0]
+  },
+  "settings": {
+    "flowtype": {
+      "onlyFilesWithFlowAnnotation": true
+    }
+  }
+}
