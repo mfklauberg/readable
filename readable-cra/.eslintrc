@@ -1,11 +1,23 @@
 {
   "parser": "babel-eslint",
-  "extends": ["airbnb"],
-  "plugins": ["flowtype"],
+  "extends": [
+    "airbnb"
+  ],
+  "env": {
+    "browser": true
+  },
+  "plugins": [
+    "flowtype"
+  ],
   "rules": {
-    "react/jsx-filename-extension": [0, {}],
-    "no-unused-vars": [0],
-    "no-bitwise": [0]
+    "react/jsx-filename-extension": "off",
+    "no-unused-vars": "off",
+    "no-bitwise": "off",
+    "quotes": [
+      "error",
+      "single"
+    ],
+    "no-shadow": "off"
   },
   "settings": {
     "flowtype": {
