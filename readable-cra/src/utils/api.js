@@ -1,6 +1,6 @@
 import guid from './guid';
 
-const address = '';
+const address = 'http://localhost:3001';
 
 const token = localStorage.token ? localStorage.token : guid();
 
@@ -43,7 +43,7 @@ export const getCategories = () =>
     .then(data => data);
 
 export const getPosts = (category: string) =>
-  get(`${category ? `${category}/posts` : '/posts'}`)
+  get(`${category ? `/${category}/posts` : '/posts'}`)
     .then(res => res.json())
     .then(data => data);
 
