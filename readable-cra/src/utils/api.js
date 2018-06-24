@@ -1,8 +1,17 @@
 import guid from './guid';
 
+const key = 'READABLE_TOKEN';
 const address = 'http://localhost:3001';
 
-const token = localStorage.token ? localStorage.token : guid();
+
+let token;
+
+if (localStorage[key]) {
+  token = localStorage.getItem(key);
+} else {
+  token = guid();
+  localStorage.setItem(key, token);
+}
 
 const headers = {
   Accept: 'application/json',
@@ -65,8 +74,8 @@ export const getPost = (post: string) =>
     .then(res => res.json())
     .then(data => data);
 
-export const votePost = (post: string, option: string) =>
-  post(`/posts/${post}`, { option })
+export const votePost = (postId: string, option: string) =>
+  post(`/posts/${postId}`, { option })
     .then(res => res.json())
     .then(data => data);
 
