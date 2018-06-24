@@ -2,10 +2,11 @@
 
 import Menu from './Menu/Menu';
 import Post from './Post/Post';
+import Arrow from './Arrow/Arrow';
 import Loader from './Loader/Loader';
 import Filter from './Filter/Filter';
 import MenuItem from './Menu/MenuItem';
 import Screen from './Container/Screen';
 import MenuTitle from './Menu/MenuTitle';
 
-export { Menu, Post, Loader, Filter, MenuItem, Screen, MenuTitle };
+export { Menu, Post, Arrow, Loader, Filter, MenuItem, Screen, MenuTitle };
