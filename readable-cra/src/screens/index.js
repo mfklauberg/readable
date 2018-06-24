@@ -1,4 +1,7 @@
-import Post from './Post/Post';
-import Category from './Category/Category';
+import HomeScreen from './Home/HomeScreen';
 
-export { Post, Category };
+export { HomeScreen };
+
+export default {
+  HomeScreen,
+};
