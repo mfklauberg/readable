@@ -7,13 +7,15 @@ import { withRouter } from 'react-router-dom';
 
 import { FETCH_POSTS, FILTER_POSTS } from '../../sagas/posts';
 
-import { Screen, Post, Filter } from '../../components';
+import { Screen, Post, Filter, NotFound, Loader } from '../../components';
 
 type HomeProps = {
-  posts: Array<any>,
   match: Object,
+  loading: boolean,
+  posts: Array<any>,
   fetchPosts: Function,
   filterPosts: Function,
+  categories: Array<string>,
 };
 
 const Title = styled.h1`
@@ -25,10 +27,6 @@ const Content = styled.div``;
 
 const StyledFilter = styled(Filter)`
   color: red;
-`;
-
-const StyledPost = styled(Post)`
-  margin: 8px;
 `;
 
 class HomeScreen extends Component<HomeProps> {
@@ -59,10 +57,37 @@ class HomeScreen extends Component<HomeProps> {
     return match.params.category;
   };
 
+  categoryExists = (category: string) => {
+    const { categories } = this.props;
+
+    return category && categories.includes(category);
+  };
+
+  renderLoading = () => (
+    <Screen>
+      <Loader color="red" size={32} />
+    </Screen>
+  );
+
+  renderNotFound = (category: string) => (
+    <Screen>
+      <NotFound message={`The category "${category}" doesn't exist.`} />
+    </Screen>
+  );
+
   render() {
-    const { posts } = this.props;
+    const { posts, loading } = this.props;
 
     const category = this.getCategory();
+
+    if (loading) {
+      return this.renderLoading();
+    }
+
+    if (!this.categoryExists(category)) {
+      return this.renderNotFound(category);
+    }
+
     const title = `Showing ${category ? `posts for ${category}` : 'all posts'}`;
 
     return (
@@ -74,7 +99,7 @@ class HomeScreen extends Component<HomeProps> {
         <Content>
           {
             posts.map(post => (
-              <StyledPost
+              <Post
                 post={post}
                 key={post.id}
                 showCategories={!category}
@@ -87,8 +112,10 @@ class HomeScreen extends Component<HomeProps> {
   }
 }
 
-const mapStateToProps = ({ posts = [] }) => ({
-  posts: [...posts],
+const mapStateToProps = ({ posts = {}, categories = [] }) => ({
+  loading: posts.loading,
+  posts: [...posts.posts],
+  categories: [...categories],
 });
 
 const mapDispatchToProps = dispatch => ({
