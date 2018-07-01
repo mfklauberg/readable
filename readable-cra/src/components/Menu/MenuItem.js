@@ -14,8 +14,4 @@ const Item = styled(NavLink)`
   }
 `;
 
-// const Item = styled.div`
-
-// `;
-
 export default Item;
