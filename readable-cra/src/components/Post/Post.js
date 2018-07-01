@@ -4,14 +4,13 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
-import { subHours, formatDistanceStrict } from 'date-fns';
 
+import { Votes, Actions, BasicInfo } from '..';
 import { FETCH_DELETE_POST, FETCH_VOTE_POST } from '../../sagas/posts';
-
-import Arrow from '../Arrow/Arrow';
 
 type PostProperties = {
   id: string,
+  body: string,
   title: string,
   author: string,
   category: string,
@@ -23,6 +22,7 @@ type PostProperties = {
 type PostProps = {
   history: Object,
   post: PostProperties,
+  showBody: boolean,
   showCategories: boolean,
 
   votePost: Function,
@@ -31,8 +31,10 @@ type PostProps = {
 
 const PostWrapper = styled.div`
   margin: 8px;
+`;
+
+const PostHeader = styled.div`
   display: flex;
-  flex-direction: row;
 `;
 
 const Title = styled.span`
@@ -44,14 +46,6 @@ const Text = styled.span`
   font-size: 14px;
 `;
 
-const Link = Text.extend`
-  cursor: pointer;
-`;
-
-const Highlight = styled.span`
-  background-color: ${props => props.color};
-`;
-
 const Tag = Text.extend`
   padding: 3px;
   margin-top: 4px
@@ -60,8 +54,13 @@ const Tag = Text.extend`
   border: 1.25px solid #C2C2C2;
 `;
 
-const getTimeSince = timestamp =>
-  `${formatDistanceStrict(subHours(new Date(timestamp), 0), new Date())} ago`;
+const PostBody = styled.div`
+  padding: 8px;
+  margin-top: 8px;
+  min-height: 70px;
+  border-radius: 3px;
+  border: 1px solid black;
+`;
 
 const getCommentInfo = commentCount =>
   (commentCount === 0 // eslint-disable-line no-nested-ternary
@@ -69,42 +68,6 @@ const getCommentInfo = commentCount =>
     : commentCount === 1
       ? '1 comment'
       : `${commentCount} comments`);
-
-const getColor = voteScore =>
-  (voteScore === 0 // eslint-disable-line no-nested-ternary
-    ? 'transparent'
-    : voteScore > 0
-      ? '#D9EAD3'
-      : '#F4CCCC');
-
-type PointsProps = {
-  voteScore: number,
-};
-
-const Points = ({ voteScore }: PointsProps) => (
-  <Highlight color={getColor(voteScore)}>
-    <Text>{voteScore} points</Text>
-  </Highlight>
-);
-
-const ArrowsWrapper = styled.div`
-  display: flex;
-  padding-right: 8px;
-  flex-direction: column;
-  justify-content: center;
-`;
-
-type ArrowsProps = {
-  onUpvote: Function,
-  onDownvote: Function,
-};
-
-const Arrows = ({ onUpvote, onDownvote }: ArrowsProps) => (
-  <ArrowsWrapper>
-    <Arrow direction="UP" onClick={onUpvote} />
-    <Arrow direction="DOWN" onClick={onDownvote} />
-  </ArrowsWrapper>
-);
 
 class Post extends Component<PostProps> {
   onEdit = () => {
@@ -133,37 +96,47 @@ class Post extends Component<PostProps> {
   };
 
   render() {
-    const { post, showCategories } = this.props;
+    const { post, showCategories, showBody } = this.props;
 
     const {
-      title, voteScore, author, timestamp, commentCount, category,
+      title,
+      voteScore,
+      author,
+      timestamp,
+      commentCount,
+      category,
+      body,
     } = post;
 
     return (
       <PostWrapper>
-        <Arrows onUpvote={() => this.onUpvote()} onDownvote={() => this.onDownvote()} />
-        <div>
-          <Title>{title}</Title>
+        <PostHeader>
+          <Votes
+            onUpvote={() => this.onUpvote()}
+            onDownvote={() => this.onDownvote()}
+          />
           <div>
-            <Points voteScore={voteScore} />
-            <Text> by {author}</Text>
-            <Text> {getTimeSince(timestamp)}</Text>
-            <Text>
-              {' '}
-              | <Link onClick={this.onEdit}>edit</Link>
-            </Text>
-            <Text>
-              {' '}
-              | <Link onClick={this.onDelete}>delete</Link> |{' '}
-            </Text>
-            <Link>{getCommentInfo(commentCount)}</Link>
-          </div>
-          {showCategories && (
+            <Title>{title}</Title>
             <div>
-              <Tag>{category}</Tag>
+              <BasicInfo
+                author={author}
+                timestamp={timestamp}
+                voteScore={voteScore}
+              />
+              <Actions
+                onEdit={this.onEdit}
+                onDelete={this.onDelete}
+              />
+              <Text> | {getCommentInfo(commentCount)}</Text>
             </div>
-          )}
-        </div>
+            {showCategories && (
+              <div>
+                <Tag>{category}</Tag>
+              </div>
+            )}
+          </div>
+        </PostHeader>
+        {showBody && <PostBody>{body}</PostBody>}
       </PostWrapper>
     );
   }
