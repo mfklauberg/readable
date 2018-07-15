@@ -77,6 +77,7 @@ const editPost = (state, { edited }) => {
 
   return {
     ...state,
+    post: newPost,
     posts: [...filtered],
     showEditPostModal: false,
   };

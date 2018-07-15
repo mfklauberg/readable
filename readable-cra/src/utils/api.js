@@ -105,7 +105,7 @@ type Comment = {
   author: string,
   parentId: string,
 };
-export const addComment = (post: string, comment: Comment) =>
+export const addComment = (comment: Comment) =>
   post('/comments', comment)
     .then(res => res.json())
     .then(data => data);

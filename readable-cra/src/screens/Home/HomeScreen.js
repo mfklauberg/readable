@@ -82,8 +82,8 @@ class HomeScreen extends Component<HomeProps> {
       <Modal
         ariaHideApp={false}
         isOpen={showNewPostModal}
-        onRequestClose={toggleAddPostModal}
         shouldCloseOnOverlayClick
+        onRequestClose={toggleAddPostModal}
       >
         <NewPost />
       </Modal>
@@ -97,8 +97,8 @@ class HomeScreen extends Component<HomeProps> {
       <Modal
         ariaHideApp={false}
         isOpen={showEditPostModal}
-        onRequestClose={toggleEditPostModal}
         shouldCloseOnOverlayClick
+        onRequestClose={toggleEditPostModal}
       >
         <EditPost />
       </Modal>

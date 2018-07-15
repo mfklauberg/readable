@@ -17,9 +17,10 @@ import {
   watchVoteComment,
   watchDeleteComment,
   watchFetchComments,
+  watchEditCommentModal,
+  watchAddNewCommentModal,
 } from './comments';
 
-// import { watchFetchPosts, watchDeletePost, watchVotePost } from './posts';
 import { watchFetchCategories } from './categories';
 
 export default function* rootSaga() {
@@ -38,6 +39,8 @@ export default function* rootSaga() {
     watchVoteComment(),
     watchDeleteComment(),
     watchFetchComments(),
+    watchEditCommentModal(),
+    watchAddNewCommentModal(),
 
     watchFetchCategories(),
   ]);

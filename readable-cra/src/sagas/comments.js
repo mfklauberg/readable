@@ -6,6 +6,7 @@ import {
   voteComment,
   deleteComment,
 } from '../utils/api';
+import guid from '../utils/guid';
 
 export const ADD_COMMENT = 'ADD_COMMENT';
 export const ADD_COMMENTS = 'ADD_COMMENTS';
@@ -19,34 +20,55 @@ export const FETCH_EDIT_COMMENT = 'FETCH_EDIT_COMMENT';
 export const FETCH_VOTE_COMMENT = 'FETCH_VOTE_COOMENT';
 export const FETCH_DELETE_COMMENT = 'FETCH_REMOVE_COMMENT';
 
-export function* addNewComment({ post, comment }) {
-  const added = yield call(addComment, post, comment);
+export const TOGGLE_ADD_COMMENT_MODAL = 'TOGGLE_ADD_COMMENT_MODAL';
+export const TOGGLE_EDIT_COMMENT_MODAL = 'TOGGLE_EDIT_COMMENT_MODAL';
+
+export const WATCH_TOGGLE_ADD_COMMENT_MODAL = 'WATCH_TOGGLE_ADD_COMMENT_MODAL';
+export const WATCH_TOGGLE_EDIT_COMMENT_MODAL = 'WATCH_TOGGLE_EDIT_COMMENT_MODAL';
+
+function* addNewComment({ post, comment }) {
+  const newComment = {
+    ...comment,
+    id: guid(),
+    parentId: post.id,
+    timestamp: (+ new Date()), //eslint-disable-line
+  };
+
+  const added = yield call(addComment, newComment);
 
   yield put({ type: ADD_COMMENT, added });
 }
 
-export function* fetchComments({ postId }) {
+function* fetchComments({ postId }) {
   const comments = yield call(getComments, postId);
 
   yield put({ type: ADD_COMMENTS, comments });
 }
 
-export function* editCommentById({ comment, details }) {
-  const edited = yield call(editComment, comment, details);
+function* editCommentById({ details }) {
+  const edited = yield call(editComment, details.id, details);
 
   yield put({ type: EDIT_COMMENT, edited });
 }
 
-export function* voteCommentById({ comment, option }) {
+function* voteCommentById({ comment, option }) {
   const voted = yield call(voteComment, comment, option);
 
   yield put({ type: VOTE_COMMENT, voted });
 }
 
-export function* deleteCommentById({ comment }) {
+function* deleteCommentById({ comment }) {
   const deleted = yield call(deleteComment, comment);
 
   yield put({ type: DELETE_COMMENT, deleted });
+}
+
+function* toggleAddPostModal() {
+  yield put({ type: TOGGLE_ADD_COMMENT_MODAL });
+}
+
+function* toggleEditModal(comment) {
+  yield put({ type: TOGGLE_EDIT_COMMENT_MODAL, comment });
 }
 
 export function* watchAddComment() {
@@ -67,4 +89,12 @@ export function* watchVoteComment() {
 
 export function* watchDeleteComment() {
   yield takeEvery(FETCH_DELETE_COMMENT, deleteCommentById);
+}
+
+export function* watchAddNewCommentModal() {
+  yield takeEvery(WATCH_TOGGLE_ADD_COMMENT_MODAL, toggleAddPostModal);
+}
+
+export function* watchEditCommentModal() {
+  yield takeEvery(WATCH_TOGGLE_EDIT_COMMENT_MODAL, toggleEditModal);
 }
