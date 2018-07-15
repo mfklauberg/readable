@@ -1,9 +1,13 @@
 import {
-  ADD_POSTS,
-  FILTER_POSTS,
-  DELETE_POST,
-  VOTE_POST,
   ADD_POST,
+  ADD_POSTS,
+  EDIT_POST,
+  VOTE_POST,
+  DELETE_POST,
+  ADD_NEW_POST,
+  FILTER_POSTS,
+  TOGGLE_ADD_POST_MODAL,
+  TOGGLE_EDIT_POST_MODAL,
 } from '../sagas/posts';
 
 const addPost = (state, { post = {}, loading = false }) => ({
@@ -52,18 +56,60 @@ const filterPosts = (state, { filters = [] }) => {
   };
 };
 
+const toggleModal = modal => (state, { post = {} }) => ({
+  ...state,
+  post: { ...post.post },
+  [modal]: !state[modal],
+});
+
+const editPost = (state, { edited }) => {
+  const { posts } = state;
+
+  const postIndex = [...posts].findIndex(p => p.id === edited.id);
+  const filtered = [...posts].filter(p => p.id !== edited.id);
+
+  const newPost = {
+    ...[...posts][postIndex],
+    ...edited,
+  };
+
+  filtered.splice(postIndex, 0, { ...newPost });
+
+  return {
+    ...state,
+    posts: [...filtered],
+    showEditPostModal: false,
+  };
+};
+
+const addNewPost = (state, { added }) => {
+  const { posts } = state;
+
+  return {
+    ...state,
+    posts: [...posts, added],
+    showNewPostModal: false,
+  };
+};
+
 const initialState = {
   posts: [],
   loading: false,
+  showNewPostModal: false,
+  showEditPostModal: false,
 };
 
 export default function posts(state = initialState, action) {
   const actions = {
     [ADD_POST]: addPost,
     [ADD_POSTS]: addPosts,
+    [EDIT_POST]: editPost,
     [VOTE_POST]: votePost,
     [DELETE_POST]: deletePost,
+    [ADD_NEW_POST]: addNewPost,
     [FILTER_POSTS]: filterPosts,
+    [TOGGLE_ADD_POST_MODAL]: toggleModal('showNewPostModal'),
+    [TOGGLE_EDIT_POST_MODAL]: toggleModal('showEditPostModal'),
   };
 
   const noop = () => state;

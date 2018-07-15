@@ -4,10 +4,7 @@ import React from 'react';
 
 type FormProps = {
   children: Array<*>,
-  onSubmit: Function,
 };
-const Form = ({ onSubmit, children }: FormProps) => (
-  <form onSubmit={onSubmit}>{children}</form>
-);
+const Form = ({ children }: FormProps) => <form>{children}</form>;
 
 export default Form;

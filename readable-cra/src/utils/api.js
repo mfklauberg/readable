@@ -64,13 +64,13 @@ type Post = {
   author: string,
   category: string,
 };
-export const addPost = (post: Post) =>
-  post('/posts', post)
+export const addPost = (newPost: Post) =>
+  post('/posts', newPost)
     .then(res => res.json())
     .then(data => data);
 
 export const getPost = (post: string) =>
-  get(`/post/${post}`)
+  get(`/posts/${post}`)
     .then(res => res.json())
     .then(data => data);
 
@@ -94,7 +94,7 @@ export const deletePost = (post: string) =>
     .then(data => data);
 
 export const getComments = (post: string) =>
-  fetch(`/posts/${post}/comments`)
+  get(`/posts/${post}/comments`)
     .then(res => res.json())
     .then(data => data);
 

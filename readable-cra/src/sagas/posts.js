@@ -7,6 +7,7 @@ import {
   votePost,
   deletePost,
 } from '../utils/api';
+import guid from '../utils/guid';
 
 export const ADD_POST = 'ADD_POST';
 export const ADD_POSTS = 'ADD_POSTS';
@@ -23,7 +24,13 @@ export const FETCH_VOTE_POST = 'FETCH_VOTE_POST';
 export const FETCH_DELETE_POST = 'FETCH_DELETE_POST';
 export const FETCH_ADD_NEW_POST = 'FETCH_ADD_NEW_POST';
 
-export function* fetchPost({ postId }) {
+export const TOGGLE_ADD_POST_MODAL = 'TOGGLE_ADD_POST_MODAL';
+export const TOGGLE_EDIT_POST_MODAL = 'TOGGLE_EDIT_POST_MODAL';
+
+export const WATCH_TOGGLE_ADD_POST_MODAL = 'WATCH_TOGGLE_ADD_POST_MODAL';
+export const WATCH_TOGGLE_EDIT_POST_MODAL = 'WATCH_TOGGLE_EDIT_POST_MODAL';
+
+function* fetchPost({ postId }) {
   yield put({ type: ADD_POST, post: {}, loading: true });
 
   const post = yield call(getPost, postId);
@@ -33,7 +40,7 @@ export function* fetchPost({ postId }) {
   }
 }
 
-export function* fetchPosts({ category }) {
+function* fetchPosts({ category }) {
   yield put({ type: ADD_POSTS, posts: [], loading: true });
 
   const posts = yield call(getPosts, category);
@@ -41,28 +48,42 @@ export function* fetchPosts({ category }) {
   yield put({ type: ADD_POSTS, posts, loading: false });
 }
 
-export function* editPostById({ post, details }) {
+function* editPostById({ post, details }) {
   const edited = yield call(editPost, post, details);
 
-  yield put({ type: VOTE_POST, edited });
+  yield put({ type: EDIT_POST, edited });
 }
 
-export function* votePostById({ post, option }) {
+function* votePostById({ post, option }) {
   const voted = yield call(votePost, post, option);
 
   yield put({ type: VOTE_POST, voted });
 }
 
-export function* deletePostById({ post }) {
+function* deletePostById({ post }) {
   const deleted = yield call(deletePost, post);
 
   yield put({ type: DELETE_POST, deleted });
 }
 
-export function* addNewPost({ post }) {
-  const added = yield call(addPost, post);
+function* addNewPost({ post }) {
+  const newPost = {
+    ...post,
+    id: guid(),
+    timestamp: (+ new Date()), //eslint-disable-line
+  };
+
+  const added = yield call(addPost, newPost);
 
   yield put({ type: ADD_NEW_POST, added });
+}
+
+function* toggleAddPostModal() {
+  yield put({ type: TOGGLE_ADD_POST_MODAL });
+}
+
+function* toggleEditModal(post) {
+  yield put({ type: TOGGLE_EDIT_POST_MODAL, post });
 }
 
 export function* watchFetchPost() {
@@ -87,4 +108,12 @@ export function* watchDeletePost() {
 
 export function* watchAddNewPost() {
   yield takeEvery(FETCH_ADD_NEW_POST, addNewPost);
+}
+
+export function* watchAddNewPostModal() {
+  yield takeEvery(WATCH_TOGGLE_ADD_POST_MODAL, toggleAddPostModal);
+}
+
+export function* watchEditPostModal() {
+  yield takeEvery(WATCH_TOGGLE_EDIT_POST_MODAL, toggleEditModal);
 }

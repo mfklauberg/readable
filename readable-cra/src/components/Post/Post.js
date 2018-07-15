@@ -6,7 +6,7 @@ import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 
 import { Votes, Actions, BasicInfo } from '..';
-import { FETCH_DELETE_POST, FETCH_VOTE_POST } from '../../sagas/posts';
+import { FETCH_DELETE_POST, FETCH_VOTE_POST, WATCH_TOGGLE_EDIT_POST_MODAL } from '../../sagas/posts';
 
 type PostProperties = {
   id: string,
@@ -27,6 +27,7 @@ type PostProps = {
 
   votePost: Function,
   deletePost: Function,
+  toggleEditPostModal: Function,
 };
 
 const PostWrapper = styled.div`
@@ -44,6 +45,10 @@ const Title = styled.span`
 
 const Text = styled.span`
   font-size: 14px;
+`;
+
+const Link = Text.extend`
+  cursor: pointer;
 `;
 
 const Tag = Text.extend`
@@ -71,6 +76,12 @@ const getCommentInfo = commentCount =>
 
 class Post extends Component<PostProps> {
   onEdit = () => {
+    const { post, toggleEditPostModal } = this.props;
+
+    toggleEditPostModal(post);
+  };
+
+  onClick = () => {
     const { post, history } = this.props;
     const { id, category } = post;
 
@@ -116,7 +127,7 @@ class Post extends Component<PostProps> {
             onDownvote={() => this.onDownvote()}
           />
           <div>
-            <Title>{title}</Title>
+            <Title onClick={this.onClick}>{title}</Title>
             <div>
               <BasicInfo
                 author={author}
@@ -127,7 +138,8 @@ class Post extends Component<PostProps> {
                 onEdit={this.onEdit}
                 onDelete={this.onDelete}
               />
-              <Text> | {getCommentInfo(commentCount)}</Text>
+              <Text> | </Text>
+              <Link onClick={this.onClick}>{getCommentInfo(commentCount)}</Link>
             </div>
             {showCategories && (
               <div>
@@ -147,6 +159,7 @@ const noop = () => ({});
 const mapDispatchToProps = dispatch => ({
   deletePost: post => dispatch({ type: FETCH_DELETE_POST, post }),
   votePost: (post, option) => dispatch({ type: FETCH_VOTE_POST, post, option }),
+  toggleEditPostModal: post => dispatch({ type: WATCH_TOGGLE_EDIT_POST_MODAL, post }),
 });
 
 export default withRouter(connect(

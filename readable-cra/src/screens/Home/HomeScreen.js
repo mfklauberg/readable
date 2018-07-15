@@ -1,13 +1,20 @@
 // @flow
 
 import React, { Component } from 'react';
+import Modal from 'react-modal';
 import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { withRouter } from 'react-router-dom';
 
-import { FETCH_POSTS, FILTER_POSTS } from '../../sagas/posts';
+import { FETCH_POSTS, FILTER_POSTS, WATCH_TOGGLE_ADD_POST_MODAL, WATCH_TOGGLE_EDIT_POST_MODAL } from '../../sagas/posts';
 
-import { Screen, Post, Filter, NotFound, Loader } from '../../components';
+import { Screen, Post, Filter, NotFound, Loader, Title, Button } from '../../components';
+
+import { NewPost, EditPost } from '../../modals';
+
+const Actions = styled.div`
+  margin: 8px;
+`;
 
 type HomeProps = {
   match: Object,
@@ -16,18 +23,11 @@ type HomeProps = {
   fetchPosts: Function,
   filterPosts: Function,
   categories: Array<string>,
+  showNewPostModal: boolean,
+  showEditPostModal: boolean,
+  toggleAddPostModal: Function,
+  toggleEditPostModal: Function,
 };
-
-const Title = styled.h1`
-  margin: 0;
-  letter-spacing: 3px;
-`;
-
-const Content = styled.div``;
-
-const StyledFilter = styled(Filter)`
-  color: red;
-`;
 
 class HomeScreen extends Component<HomeProps> {
   componentDidMount() {
@@ -65,7 +65,7 @@ class HomeScreen extends Component<HomeProps> {
 
   renderLoading = () => (
     <Screen>
-      <Loader color="red" size={32} />
+      <Loader size={32} />
     </Screen>
   );
 
@@ -75,8 +75,38 @@ class HomeScreen extends Component<HomeProps> {
     </Screen>
   );
 
+  renderNewPostModal = () => {
+    const { showNewPostModal, toggleAddPostModal } = this.props;
+
+    return (
+      <Modal
+        ariaHideApp={false}
+        isOpen={showNewPostModal}
+        onRequestClose={toggleAddPostModal}
+        shouldCloseOnOverlayClick
+      >
+        <NewPost />
+      </Modal>
+    );
+  };
+
+  renderEditPostModal = () => {
+    const { showEditPostModal, toggleEditPostModal } = this.props;
+
+    return (
+      <Modal
+        ariaHideApp={false}
+        isOpen={showEditPostModal}
+        onRequestClose={toggleEditPostModal}
+        shouldCloseOnOverlayClick
+      >
+        <EditPost />
+      </Modal>
+    );
+  };
+
   render() {
-    const { posts, loading } = this.props;
+    const { toggleAddPostModal, posts, loading } = this.props;
 
     const category = this.getCategory();
 
@@ -84,7 +114,7 @@ class HomeScreen extends Component<HomeProps> {
       return this.renderLoading();
     }
 
-    if (!this.categoryExists(category)) {
+    if (category && !this.categoryExists(category)) {
       return this.renderNotFound(category);
     }
 
@@ -93,20 +123,29 @@ class HomeScreen extends Component<HomeProps> {
     return (
       <Screen>
         <Title>{title}</Title>
-        <StyledFilter
+        <Filter
           onFilter={this.onFilter}
         />
-        <Content>
+
+        <Actions>
+          <Button label="Add new post" onClick={toggleAddPostModal} />
+        </Actions>
+        <div>
           {
-            posts.map(post => (
-              <Post
-                post={post}
-                key={post.id}
-                showCategories={!category}
-              />
+            posts
+              .filter(post => (category ? (post.category === category) : true))
+              .map(post => (
+                <Post
+                  post={post}
+                  key={post.id}
+                  showCategories={!category}
+                />
             ))
           }
-        </Content>
+        </div>
+
+        {this.renderNewPostModal()}
+        {this.renderEditPostModal()}
       </Screen>
     );
   }
@@ -116,11 +155,15 @@ const mapStateToProps = ({ posts = {}, categories = [] }) => ({
   loading: posts.loading,
   posts: [...posts.posts],
   categories: [...categories],
+  showNewPostModal: posts.showNewPostModal,
+  showEditPostModal: posts.showEditPostModal,
 });
 
 const mapDispatchToProps = dispatch => ({
   fetchPosts: category => dispatch({ type: FETCH_POSTS, category }),
   filterPosts: filters => dispatch({ type: FILTER_POSTS, filters }),
+  toggleAddPostModal: () => dispatch({ type: WATCH_TOGGLE_ADD_POST_MODAL }),
+  toggleEditPostModal: post => dispatch({ type: WATCH_TOGGLE_EDIT_POST_MODAL, post }),
 });
 
 export default withRouter(connect(
