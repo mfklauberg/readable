@@ -17,7 +17,7 @@ const Circle = styled.div`
   border: 4px solid;
   border-color: #9e9e9e;
   border-radius: 100%;
-  border-top-color: #${props => props.color};
+  border-top-color: #3797F1;
   animation: ${rotate} 0.8s linear infinite;
   width: ${props => props.size}px;
   height: ${props => props.size}px;
@@ -25,13 +25,12 @@ const Circle = styled.div`
 
 type LoaderProps = {
   size: number,
-  color: string,
 };
 
-function Loader({ size = 32, color = '3797F1' }: LoaderProps) {
+function Loader({ size = 32 }: LoaderProps) {
   return (
     <Container>
-      <Circle size={size} color={color} />
+      <Circle size={size} />
     </Container>
   );
 }
