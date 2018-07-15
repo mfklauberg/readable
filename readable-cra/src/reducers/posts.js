@@ -56,11 +56,18 @@ const filterPosts = (state, { filters = [] }) => {
   };
 };
 
-const toggleModal = modal => (state, { post = {} }) => ({
-  ...state,
-  post: { ...post.post },
-  [modal]: !state[modal],
-});
+const toggleModal = modal => (state, { post = {} }) => {
+  const newState = {
+    ...state,
+    [modal]: !state[modal],
+  };
+
+  if (post.post) {
+    newState.post = post.post;
+  }
+
+  return newState;
+};
 
 const editPost = (state, { edited }) => {
   const { posts } = state;
