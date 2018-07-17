@@ -10,6 +10,10 @@ import {
   TOGGLE_EDIT_POST_MODAL,
 } from '../sagas/posts';
 
+import {
+  UPDATE_COMMENT_COUNT,
+} from '../sagas/comments';
+
 const addPost = (state, { post = {}, loading = false }) => ({
   ...state,
   post,
@@ -100,6 +104,40 @@ const addNewPost = (state, { added }) => {
   };
 };
 
+const updateCommentCount = (state, { postId, value }) => {
+  const { posts, post } = state;
+
+  if (post && post.id === postId) {
+    const commentCount = post.commentCount + value;
+
+    const updatedPost = {
+      ...post,
+      commentCount,
+    };
+
+    return {
+      ...state,
+      post: updatedPost,
+    };
+  }
+
+  const postIndex = [...posts].findIndex(p => p.id === postId);
+  const postToUpdate = [...posts][postIndex];
+
+  const updatedPost = {
+    ...postToUpdate,
+    commentCount: postToUpdate.commentCount + value,
+  };
+
+  const filtered = [...posts].filter(p => p.id !== postId);
+  filtered.splice(postIndex, 0, { ...updatedPost });
+
+  return {
+    ...state,
+    posts: [...filtered],
+  };
+};
+
 const initialState = {
   posts: [],
   loading: false,
@@ -116,6 +154,7 @@ export default function posts(state = initialState, action) {
     [DELETE_POST]: deletePost,
     [ADD_NEW_POST]: addNewPost,
     [FILTER_POSTS]: filterPosts,
+    [UPDATE_COMMENT_COUNT]: updateCommentCount,
     [TOGGLE_ADD_POST_MODAL]: toggleModal('showNewPostModal'),
     [TOGGLE_EDIT_POST_MODAL]: toggleModal('showEditPostModal'),
   };

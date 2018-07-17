@@ -26,6 +26,8 @@ export const TOGGLE_EDIT_COMMENT_MODAL = 'TOGGLE_EDIT_COMMENT_MODAL';
 export const WATCH_TOGGLE_ADD_COMMENT_MODAL = 'WATCH_TOGGLE_ADD_COMMENT_MODAL';
 export const WATCH_TOGGLE_EDIT_COMMENT_MODAL = 'WATCH_TOGGLE_EDIT_COMMENT_MODAL';
 
+export const UPDATE_COMMENT_COUNT = 'UPDATE_COMMENT_COUNT';
+
 function* addNewComment({ post, comment }) {
   const newComment = {
     ...comment,
@@ -37,6 +39,7 @@ function* addNewComment({ post, comment }) {
   const added = yield call(addComment, newComment);
 
   yield put({ type: ADD_COMMENT, added });
+  yield put({ type: UPDATE_COMMENT_COUNT, postId: post.id, value: 1 });
 }
 
 function* fetchComments({ postId }) {
@@ -61,6 +64,7 @@ function* deleteCommentById({ comment }) {
   const deleted = yield call(deleteComment, comment);
 
   yield put({ type: DELETE_COMMENT, deleted });
+  yield put({ type: UPDATE_COMMENT_COUNT, postId: deleted.parentId, value: -1 });
 }
 
 function* toggleAddPostModal() {
