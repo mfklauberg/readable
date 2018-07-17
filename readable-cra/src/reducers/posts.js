@@ -10,9 +10,7 @@ import {
   TOGGLE_EDIT_POST_MODAL,
 } from '../sagas/posts';
 
-import {
-  UPDATE_COMMENT_COUNT,
-} from '../sagas/comments';
+import { UPDATE_COMMENT_COUNT } from '../sagas/comments';
 
 const addPost = (state, { post = {}, loading = false }) => ({
   ...state,
@@ -29,6 +27,7 @@ const addPosts = (state, { posts = [], loading = false }) => ({
 const deletePost = (state, { deleted }) => ({
   ...state,
   posts: [...state.posts.filter(post => post.id !== deleted.id)],
+  post: deleted,
 });
 
 const votePost = (state, { voted }) => {

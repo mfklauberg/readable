@@ -138,6 +138,10 @@ class PostDetailsScreen extends Component<PostDetailsProps, PostDetailsState> {
       return this.renderCategoryNotFound(category);
     }
 
+    if (post && post.deleted) {
+      return this.renderPostNotFound(post.id);
+    }
+
     return (
       <Screen>
         <Post

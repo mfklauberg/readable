@@ -35,8 +35,11 @@ function* fetchPost({ postId }) {
 
   const post = yield call(getPost, postId);
 
-  if (!post.error) {
+  if (post.id && !post.error) {
     yield put({ type: ADD_POST, post, loading: false });
+  } else {
+    const emptyPost = { deleted: true, id: postId };
+    yield put({ type: ADD_POST, post: emptyPost, loading: false });
   }
 }
 
