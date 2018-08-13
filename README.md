@@ -25,3 +25,17 @@ yarn/npm install
 
 yarn/npm start
 ```
+
+## Built with
+
+* [React](https://reactjs.org)
+* [Styled Components](https://www.styled-components.com)
+* [date-fns](https://date-fns.org)
+* [react-modal](https://github.com/reactjs/react-modal)
+* [Redux](https://redux.js.org)
+* [react-redux](https://github.com/reduxjs/react-redux)
+* [redux-saga](https://redux-saga.js.org)
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](./LICENSE.md) file for details
